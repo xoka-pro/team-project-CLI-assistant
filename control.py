@@ -1,5 +1,4 @@
 import re
-import requests
 
 
 def check_phone(text: str) -> bool:
