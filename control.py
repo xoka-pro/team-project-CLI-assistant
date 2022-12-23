@@ -31,18 +31,3 @@ def check_email(text: str) -> bool:
     result = re.search(
         r"^(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}$", text)
     return not result is None
-
-
-def main():
-    # for test
-    list_test = ["nfn@d-f.dd", "SDFSDFS@f989ff.com",
-                 "dooo@com.ua", "test-e@com.uu", "last..war@gmail.com"]
-    for test_str in list_test:
-        print(test_str)
-        print(check_email(test_str))
-
-    pass
-
-
-if __name__ == '__main__':
-    main()
