@@ -1,27 +1,22 @@
 from pyowm import OWM
 from pyowm.commons.exceptions import NotFoundError
-WEATHER_API = OWM('**my API code**')
+WEATHER_API = OWM('** OUR API code**')
 
 
 def input_error(func):
+    """Important exception — it needs for catch incorrect city.
+        Should add this except at the main input_error func"""
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except KeyError:
-            return 'This contact doesnt exist, please try again.'
-        except ValueError as exception:
-            return exception.args[0]
-        except IndexError:
-            return 'This contact cannot be added, it exists already'
-        except TypeError:
-            return 'Unknown command or parametrs, please try again.'
         except NotFoundError:
             return 'Unknown city, please try again.'
     return inner
 
 
 @input_error
-def get_weather(args):
+def get_weather(args: list):
+    """Function shows the weather in the city selected by the user. If entered incorrectly, a NotFoundError occurs. """
     city = args  # city = args[0].capitalize()
     manager = WEATHER_API.weather_manager()
     observe = manager.weather_at_place(city)
