@@ -22,7 +22,9 @@ class Note:
     def find_text(self, text: str):
         """Пошук тексту в нотатці"""
         if -1 != self.content.find(text):
-            return self
+            return True
+        else:
+            return False
 
 
 class NoteBook(UserDict):
@@ -75,7 +77,6 @@ class NoteBook(UserDict):
 
         # пошук за частиною з загального тексту
         for note_rec in self.data.values():
-            find_res = note_rec.find_text(text)
-            if not find_res is None:
-                res_set.add(find_res)
+            if note_rec.find_text(text):
+                res_set.add(note_rec)
         return res_set
