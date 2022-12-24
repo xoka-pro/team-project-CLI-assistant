@@ -1,7 +1,7 @@
 from collections import UserDict
 import datetime
-import re
 import pickle
+import control
 
 FILENAME = 'contacts.dat'
 
@@ -24,6 +24,25 @@ class AddressBook(UserDict):
     def __iter__(self):
         for key, value in self.data.items():
             yield key, value
+
+    def list_record_to_x_day_bd(self, day_to_birthday=0) -> list:
+        list_of_record = []
+        today = datetime.date.today()
+        for record in self.data.values():
+            # перевірка на наявність дати
+            if not record.birthday:
+                continue
+            birthday = record.birthday.value
+
+            shift = (datetime(today.year, birthday.month,
+                     birthday.day).date() - today.date()).days
+            if shift < 0:
+                shift = (datetime(today.year+1, birthday.month,
+                         birthday.day).date() - today.date()).days
+
+            if shift <= day_to_birthday:
+                list_of_record.append(record)
+        return list_of_record
 
     def search(self, value):
         ''' A method that searching a contact in adressbook and return list with coincidences'''
@@ -74,16 +93,31 @@ class Name(Field):
     pass
 
 
+class Email(Field):
+    """Необов'язкове поле з емайлом"""
+
+    @classmethod
+    def check_email(cls, email):
+        """Метод для валідації синтаксису email"""
+        if not control.check_email(email):
+            raise ValueError(
+                'Incorrect email format')
+        return email
+
+    @Field.value.setter
+    def value(self, value):
+        self._value = self.check_email(value)
+
+
 class Phone(Field):
     """Необов'язкове поле з номером телефону(або кількома)"""
 
     @classmethod
     def check_phone(cls, phone):
         """Метод для валідації синтаксису номера телефона"""
-        phone_format = r"\([0-9]{3}\)[0-9]{3}-[0-9]{2}-[0-9]{2}"
-        if len(re.findall(phone_format, phone)) == 0:
+        if not control.check_phone(phone):
             raise ValueError(
-                'Incorrect phone format, should be (XXX)AAA-BB-CC')
+                'Incorrect phone format, should be: \n + 380991112233 or 099-111-22-33 or 099-111-2233 or 0991112233 \n or (099)1112233 or (099)111-22-33 or (099)111-2233')
         return phone
 
     @Field.value.setter
@@ -114,12 +148,15 @@ class Record:
     """Відповідає за логіку додавання/видалення/редагування полів.
     А також реалізує метод розрахунку днів до наступного дня народження(якщо параметр задано для поля)"""
 
-    def __init__(self, name, phone=None, birthday=None):
+    def __init__(self, name, phone=None, birthday=None, email=None):
         self.name = Name(name)
         self.phones = [Phone(phone)] if phone else []
 
         if birthday:
             self.birthday = Birthday(birthday)
+
+        if email:
+            self.email = Email(email)
 
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
