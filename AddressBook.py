@@ -25,6 +25,20 @@ class AddressBook(UserDict):
         for key, value in self.data.items():
             yield key, value
 
+    def search(self, value):
+        ''' A method that searching a contact in adressbook and return list with coincidences'''
+        record_result = []
+        for record in self.data.values():
+            if value in record.name.value:
+                record_result.append(record)
+                continue
+            for phone in record.phones:
+                if value in phone.value:
+                    record_result.append(record)
+        if not record_result:
+            raise ValueError('Contact does not exist')
+        return record_result
+
     def loader(self) -> None:
         """Функція завантажує дані з файлу, якщо він існує"""
         try:
@@ -41,6 +55,7 @@ class AddressBook(UserDict):
 
 class Field:
     """Батьківський клас для всіх записів у книзі контактів"""
+
     def __init__(self, value):
         self._value = None
         self.value = value
@@ -67,7 +82,8 @@ class Phone(Field):
         """Метод для валідації синтаксису номера телефона"""
         phone_format = r"\([0-9]{3}\)[0-9]{3}-[0-9]{2}-[0-9]{2}"
         if len(re.findall(phone_format, phone)) == 0:
-            raise ValueError('Incorrect phone format, should be (XXX)AAA-BB-CC')
+            raise ValueError(
+                'Incorrect phone format, should be (XXX)AAA-BB-CC')
         return phone
 
     @Field.value.setter
@@ -121,10 +137,12 @@ class Record:
     def days_to_birthday(self):
         today = datetime.date.today()
         birthday = self.birthday.value
-        next_birthday = datetime.date(year=today.year, month=birthday.month, day=birthday.day)
+        next_birthday = datetime.date(
+            year=today.year, month=birthday.month, day=birthday.day)
 
         if next_birthday < today:
-            next_birthday = datetime.date(year=today.year + 1, month=birthday.month, day=birthday.day)
+            next_birthday = datetime.date(
+                year=today.year + 1, month=birthday.month, day=birthday.day)
 
         delta = next_birthday - today
 
