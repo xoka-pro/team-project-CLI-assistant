@@ -1,5 +1,6 @@
 from AddressBook import AddressBook, Record
 from NoteBook import NoteBook
+from sorter import sorter
 
 CONTACTS = AddressBook()
 NOTES = NoteBook()
@@ -161,6 +162,7 @@ def parser(msg: str):
         'exit': goodbye,
         'delete': del_phone,
         'search': search,
+        'sort': sorter,
     }
 
     for key in operations:
