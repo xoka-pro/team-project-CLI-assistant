@@ -8,12 +8,14 @@ class Note:
     title (str) - коротка назва
     content (str) - все тіло нотатки
     data (datetime) - дата створення
+    tags (str) - теги
     """
 
-    def __init__(self, content: str):
+    def __init__(self, content: str, tags):
         self.title = content[:20]
         self.content = content
         self.data = datetime.now()
+        self.tags = tags
 
     def __str__(self) -> str:
         """Модифікація виводу нотатки"""
@@ -80,3 +82,27 @@ class NoteBook(UserDict):
             if note_rec.find_text(text):
                 res_set.add(note_rec)
         return res_set
+
+    def search_by_tags(self, tag: str) -> list:
+        """Пошук за тегами"""
+        result = []
+        for note in self.data.values():
+            if note.tags:
+                if tag in note.tags:
+                    result.append(note.content)
+
+        return result
+
+    def sort_by_tags(self):
+        """Сортування за тегами"""
+        all_tags = []
+        result = []
+        for note in self.data.values():
+            if note.tags:
+                for tag in note.tags:
+                    all_tags.append(tag)
+        all_tags.sort()
+        for rang_tag in all_tags:
+            result.extend(self.search_by_tags(rang_tag))
+
+        return result
