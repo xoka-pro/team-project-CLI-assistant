@@ -1,7 +1,6 @@
 from AddressBook import AddressBook, Record
 from NoteBook import NoteBook, Note
 from sorter import sorter
-import difflib
 
 CONTACTS = AddressBook()
 NOTES = NoteBook()
