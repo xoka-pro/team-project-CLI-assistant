@@ -101,6 +101,12 @@ def delete_note() -> str:
     return f'I can not delete the note. There is no note with title "{title}".'
 
 
+@input_error
+def delete_user(name):
+    CONTACTS.remove_record(name)
+    return f"User with name {name} was deleted"
+
+
 def editing_note() -> str:
     title = input("Input at least 20 first chars of the note for editing: ")
     title = title[:20]
@@ -208,7 +214,7 @@ def hlp(*args) -> str:
             f'search -- search contacts by letters in name or digits in number\n'
             f'delete -- delete specified number from contact\n'
             f'good bye, close, exit -- shutdown application\n'
-            f'note_add -- add new note to the notebook\n' 
+            f'note_add -- add new note to the notebook\n'
             'note_delete -- delete the note to the notebook\n'
             'note_edite -- edite the note to the notebook\n'
             'tag_search -- search all notes with the tag\n'
@@ -250,7 +256,9 @@ operations = {
     'good bye': goodbye,
     'close': goodbye,
     'exit': goodbye,
-    'delete': del_phone,
+    'del phone': del_phone,
+    'delete': delete_user,
+    'del': delete_user,
     'search': search,
     'sort': sorter,
     'note_add': adding_note,
@@ -258,7 +266,7 @@ operations = {
     'note_edite': editing_note,
     'tag_search': searching_by_tag,
     'tag_sort': sorting_by_tags,
-    'birthday': list_record_to_x_day_bd,    
+    'birthday': list_record_to_x_day_bd,
 }
 
 

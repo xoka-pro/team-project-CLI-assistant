@@ -12,6 +12,9 @@ class AddressBook(UserDict):
     def add_record(self, record):
         self.data[record.name.value] = record
 
+    def remove_record(self, name: str):
+        self.data.pop(name)
+
     def iterator(self, count: int):
         for key, value in self:
             i = 1
