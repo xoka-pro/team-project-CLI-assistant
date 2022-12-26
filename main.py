@@ -3,6 +3,8 @@ from NoteBook import NoteBook, Note
 from sorter import sorter
 import difflib
 from tabulate import tabulate
+import holidays
+from datetime import date
 
 CONTACTS = AddressBook()
 NOTES = NoteBook()
@@ -216,6 +218,31 @@ def list_record_to_x_day_bd(*args) -> str:
     return '\n'.join(result)
 
 
+def today_holiday(*args) -> str:
+    if len(args):
+        day = int(args[0])
+    else:
+        day = 0
+    ua_holidays = holidays.country_holidays('UA')
+    if day:
+        result = []
+        d_start = date.today().toordinal()
+        for iter in range(d_start, d_start+day):
+            res = ua_holidays.get(date.fromordinal(iter))
+            if not res is None:
+                result.append(date.fromordinal(iter).strftime('%d-%m-%Y'))
+                result.append(res)
+        if len(result):
+            return '\n'.join(result)
+        else:
+            return 'No holiday in period'
+    else:
+        res = ua_holidays.get(date.today())
+    if res is None:
+        return 'No holiday today'
+    return res
+
+
 def hlp(*args) -> str:
     """Returns brief command help"""
 
@@ -234,6 +261,8 @@ def hlp(*args) -> str:
            ("tag_search", "search all notes with the tag"),
            ("tag_sort", "sort all notes by tags"),
            ("word_search", "search all notes with the word"),
+           ("birthday X", "list of contact with birthday in X days"),
+           ("holiday X", "list of holidays in Ukraine today or X days"),
            ]
     columns = ['Known commands', 'Description']
     return tabulate(res, headers=columns, tablefmt='pipe')
@@ -282,6 +311,7 @@ operations = {
     'tag_sort': sorting_by_tags,
     'birthday': list_record_to_x_day_bd,
     'word_search': searching_by_word,
+    'holiday': today_holiday,
 }
 
 
