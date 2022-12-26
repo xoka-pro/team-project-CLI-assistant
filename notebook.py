@@ -1,6 +1,7 @@
 from collections import UserDict
 import pickle
 from datetime import datetime
+from constants import FILENAME_NOTES
 
 
 class Note:
@@ -35,8 +36,6 @@ class Note:
 class NoteBook(UserDict):
     """Клас для зберігання нотатків"""
 
-    FILENAME = 'notebook.dat'
-
     def add_note(self, note: Note):
         """Внесення нової нотатки"""
         self.data[note.title] = note
@@ -51,12 +50,12 @@ class NoteBook(UserDict):
         """Видалення нотатки знайденої за тайтлом"""
         del self.data[title].content
 
-    def saver(self, fh=FILENAME):
+    def saver(self, fh=FILENAME_NOTES):
         """Збереження словника нотатків до файлу"""
         with open(fh, 'wb') as file:
             pickle.dump(self.data, file)
 
-    def loader(self, fh=FILENAME):
+    def loader(self, fh=FILENAME_NOTES):
         """Завантаження словника нотатків з файлу"""
         try:
             with open(fh, 'rb') as file:

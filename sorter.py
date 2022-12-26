@@ -2,12 +2,7 @@ from os import listdir
 from pathlib import Path
 import shutil
 import re
-
-IMAGES_SUFFIX = ('JPEG', 'PNG', 'JPG', 'SVG')
-DOCUMENTS_SUFFIX = ('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX', 'PPT')
-AUDIO_SUFFIX = ('MP3', 'OGG', 'WAV', 'AMR')
-VIDEO_SUFFIX = ('AVI', 'MP4', 'MOV', 'MKV')
-ARCHIVES_SUFFIX = ('ZIP', 'GZ', 'TAR')
+from constants import IMAGES_SUFFIX, DOCUMENTS_SUFFIX, AUDIO_SUFFIX, VIDEO_SUFFIX, ARCHIVES_SUFFIX
 
 
 def normalize(in_string: str) -> str:

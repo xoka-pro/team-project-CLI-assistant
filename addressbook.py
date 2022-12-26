@@ -2,8 +2,7 @@ from collections import UserDict
 from datetime import datetime, date
 import pickle
 import control
-
-FILENAME = 'contacts.dat'
+from constants import FILENAME_CONTACTS
 
 
 class AddressBook(UserDict):
@@ -64,14 +63,14 @@ class AddressBook(UserDict):
     def loader(self) -> None:
         """Функція завантажує дані з файлу, якщо він існує"""
         try:
-            with open(FILENAME, "rb") as file:
+            with open(FILENAME_CONTACTS, "rb") as file:
                 self.data = pickle.load(file)
         except FileNotFoundError:
             pass
 
     def saver(self) -> None:
         """Функція зберігає дані у файл"""
-        with open(FILENAME, "wb") as file:
+        with open(FILENAME_CONTACTS, "wb") as file:
             pickle.dump(self.data, file)
 
 
@@ -93,6 +92,11 @@ class Field:
 
 class Name(Field):
     """Обов'язкове поле з ім'ям в книзі контактів"""
+    pass
+
+
+class Address(Field):
+    """For address of contact"""
     pass
 
 
@@ -151,7 +155,7 @@ class Record:
     """Відповідає за логіку додавання/видалення/редагування полів.
     А також реалізує метод розрахунку днів до наступного дня народження(якщо параметр задано для поля)"""
 
-    def __init__(self, name, phone=None, birthday=None, email=None):
+    def __init__(self, name, phone=None, birthday=None, email=None, address=None):
         self.name = Name(name)
         self.phones = [Phone(phone)] if phone else []
 
@@ -161,18 +165,33 @@ class Record:
         if email:
             self.email = Email(email)
 
+        if address:
+            self.address = Address(address)
+
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
 
+    def change_field(self, field_name, old_value, new_value):
+        if field_name == 'phones':
+            for el in self.phones:
+                if el.value == old_value:
+                    el.value = new_value
+        elif hasattr(self, field_name) and self.birthday == Birthday(old_value):
+            self.birthday = Birthday(new_value)
+        elif hasattr(self, field_name) and self.email == Email(old_value):
+            self.email = Email(new_value)
+        elif hasattr(self, field_name) and self.address == Address(old_value):
+            self.address = Address(new_value)
+
     def change_phone(self, old_phone, new_phone):
-        for el in self.phones:
-            if el.value == old_phone:
-                el.value = new_phone
+        for phone_number in self.phones:
+            if phone_number.value == old_phone:
+                phone_number.value = new_phone
 
     def del_phone(self, phone):
-        for el in self.phones:
-            if el.value == phone:
-                self.phones.remove(el)
+        for phone_number in self.phones:
+            if phone_number.value == phone:
+                self.phones.remove(phone_number)
 
     def days_to_birthday(self):
         today = date.today()
@@ -188,5 +207,5 @@ class Record:
 
         if delta.days == 0:
             return "birthday today!"
-        else:
-            return f'{delta.days} days to birthday'
+
+        return f'{delta.days} days to birthday'
