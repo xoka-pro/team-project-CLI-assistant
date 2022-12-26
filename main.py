@@ -1,5 +1,5 @@
 from AddressBook import AddressBook, Record
-from NoteBook import NoteBook
+from NoteBook import NoteBook, Note
 from sorter import sorter
 
 CONTACTS = AddressBook()
@@ -8,6 +8,7 @@ NOTES = NoteBook()
 
 def input_error(func):
     """ Errors handler """
+
     def wrapper(*args):
         try:
             return func(*args)
@@ -19,12 +20,14 @@ def input_error(func):
             return f'Value error: {error}'
         except TypeError as error:
             return f'Not enough arguments. Error: {error}'
+
     return wrapper
 
 
 def hello() -> str:
     """Функція для вітання користувача"""
     CONTACTS.loader()
+    NOTES.loader()
     return (f'How can I help you?\n'
             f'Type "h" or "help" to show help')
 
@@ -36,11 +39,11 @@ def goodbye():
 
 
 @input_error
-def add(name, number, birthday=None) -> str:
+def add(name, number, birthday=None, email=None) -> str:
     """Функція для додавання нового запису або додавання нового телефону контакту"""
 
     if name not in CONTACTS:
-        new_number = Record(name, number, birthday)
+        new_number = Record(name, number, birthday, email)
         CONTACTS.add_record(new_number)
         CONTACTS.saver()
         return f'Contact add successfully'
@@ -48,6 +51,18 @@ def add(name, number, birthday=None) -> str:
         CONTACTS[name].add_phone(number)
         CONTACTS.saver()
         return f'New number added to {name}'
+
+
+def adding_note() -> str:
+    text = input('Input text for the note: ')
+    tags = input('Input tags for the note: ')
+    tags = tags.split(" ")
+    note = Note(text, tags)
+    NOTES.add_note(note)
+    NOTES.saver()
+    if note.tags:
+        return f'New note with tags added'
+    return f'New note added'
 
 
 @input_error
@@ -75,6 +90,27 @@ def del_phone(name, phone) -> str:
     return f'Phone number deleted successfully'
 
 
+def delete_note() -> str:
+    title = input("Input at least 20 first chars of the note for editing: ")
+    title = title[:20]
+    if NOTES.data.get(title):
+        NOTES.delete_note(title)
+        NOTES.saver()
+        return f'Note deleted successfully'
+    return f'I can not delete the note. There is no note with title "{title}".'
+
+
+def editing_note() -> str:
+    title = input("Input at least 20 first chars of the note for editing: ")
+    title = title[:20]
+    if NOTES.data.get(title):
+        new_text = input("Input the new text of note: ")
+        NOTES.edit_note(title, new_text)
+        NOTES.saver()
+        return f'Note changed successfully'
+    return f'I can not change the note. There is no note with title "{title}".'
+
+
 @input_error
 def phone_func(*args) -> str:
     """Повертає номер телефону для зазначеного контакту"""
@@ -84,11 +120,23 @@ def phone_func(*args) -> str:
     for el in CONTACTS.iterator(5):
         for name, data in el.items():
             if name == find_phone:
-                result.append(f'Name: {name} | Numbers: {", ".join(phone.value for phone in data.phones)}')
+                result.append(
+                    f'Name: {name} | Numbers: {", ".join(phone.value for phone in data.phones)}')
 
     if len(result) < 1:
         return f'No contact {find_phone}'
     return '\n'.join(result)
+
+
+def searching_by_tag(word: str) -> str:
+    res = NOTES.search_by_tags(word)
+    res = "\n".join(res)
+    return res
+
+
+def sorting_by_tags(word: str) -> str:
+    res = "\n".join(NOTES.sort_by_tags(word))
+    return res
 
 
 @input_error
@@ -102,7 +150,8 @@ def show_all() -> str:
             if hasattr(data, 'birthday'):
                 bday = data.birthday.value.date().strftime('%d-%m-%Y')
                 to_birthday = CONTACTS[name].days_to_birthday()
-                result.append(f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
+                result.append(
+                    f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
             else:
                 result.append(f'Name: {name} | Numbers: {numbers}')
     if len(result) < 1:
@@ -118,14 +167,30 @@ def search(*args) -> str:
     for el in CONTACTS.iterator(5):
         for name, data in el.items():
             numbers = ", ".join(phone.value for phone in data.phones)
-            if str(name).lower().find(search_text) >= 0 or\
+            if str(name).lower().find(search_text) >= 0 or \
                     numbers.find(search_text) >= 0:
                 if hasattr(data, 'birthday'):
                     bday = data.birthday.value.date().strftime('%d-%m-%Y')
                     to_birthday = CONTACTS[name].days_to_birthday()
-                    result.append(f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
+                    result.append(
+                        f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
                 else:
                     result.append(f'Name: {name} | Numbers: {numbers}')
+    if len(result) < 1:
+        return f'No results'
+    return '\n'.join(result)
+
+
+@input_error
+def list_record_to_x_day_bd(*args) -> str:
+    """Функія формує текст зі списку днів народження в вказані дні"""
+    result = []
+    day = int(args[0])
+    for el in CONTACTS.list_record_to_x_day_bd(day):
+        numbers = ", ".join(phone.value for phone in el.phones)
+        bday = el.birthday.value.date().strftime('%d-%m-%Y')
+        result.append(
+            f'Name: {el.name.value} | Numbers: {numbers} | Birthday: {bday}')
     if len(result) < 1:
         return f'No results'
     return '\n'.join(result)
@@ -141,29 +206,19 @@ def hlp(*args) -> str:
             f'show all -- show all contacts\n'
             f'search -- search contacts by letters in name or digits in number\n'
             f'delete -- delete specified number from contact\n'
-            f'good bye, close, exit -- shutdown application')
+            f'good bye, close, exit -- shutdown application\n'
+            f'note_add -- add new note to the notebook\n' 
+            'note_delete -- delete the note to the notebook\n'
+            'note_edite -- edite the note to the notebook\n'
+            'tag_search -- search all notes with the tag\n'
+            'tag_sort -- sort all notes by tags\n'
+            )
 
 
 def parser(msg: str):
     """ Parser and handler AIO """
     command = None
     params = []
-
-    operations = {
-        'hello': hello,
-        'h': hlp,
-        'help': hlp,
-        'add': add,
-        'change': change,
-        'phone': phone_func,
-        'show all': show_all,
-        'good bye': goodbye,
-        'close': goodbye,
-        'exit': goodbye,
-        'delete': del_phone,
-        'search': search,
-        'sort': sorter,
-    }
 
     for key in operations:
         if msg.lower().startswith(key):
@@ -175,6 +230,31 @@ def parser(msg: str):
     return command, params
 
 
+def incorrect_input(msg):
+    guess = difflib.get_close_matches(msg, operations.keys())
+    if guess:
+        return f'Sorry, unknown command. Maybe you mean: {" ,".join(guess)}'
+    else:
+        return f'Sorry, unknown command, try again. Type "h" for help.'
+
+
+operations = {
+    'hello': hello,
+    'h': hlp,
+    'help': hlp,
+    'add': add,
+    'change': change,
+    'phone': phone_func,
+    'show all': show_all,
+    'good bye': goodbye,
+    'close': goodbye,
+    'exit': goodbye,
+    'delete': del_phone,
+    'search': search,
+    'sort': sorter,
+}
+
+
 def main():
     """ Main function - all interaction with user """
     print(hello())
@@ -184,7 +264,7 @@ def main():
         if command:
             print(command(*params))
         else:
-            print(f'Sorry, unknown command, try again. Type "h" for help.')
+            print(incorrect_input(msg))
 
 
 if __name__ == '__main__':
