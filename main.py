@@ -220,28 +220,6 @@ def parser(msg: str):
     command = None
     params = []
 
-    operations = {
-        'hello': hello,
-        'h': hlp,
-        'help': hlp,
-        'add': add,
-        'change': change,
-        'phone': phone_func,
-        'show all': show_all,
-        'good bye': goodbye,
-        'close': goodbye,
-        'exit': goodbye,
-        'delete': del_phone,
-        'search': search,
-        'sort': sorter,
-        'note_add': adding_note,
-        'note_delete': delete_note,
-        'note_edite': editing_note,
-        'tag_search': searching_by_tag,
-        'tag_sort': sorting_by_tags,
-        'birthday': list_record_to_x_day_bd,
-    }
-
     for key in operations:
         if msg.lower().startswith(key):
             command = operations[key]
@@ -250,6 +228,37 @@ def parser(msg: str):
                 params.append(item)
             return command, params
     return command, params
+
+
+def incorrect_input(msg):
+    guess = difflib.get_close_matches(msg, operations.keys())
+    if guess:
+        return f'Sorry, unknown command. Maybe you mean: {" ,".join(guess)}'
+    else:
+        return f'Sorry, unknown command, try again. Type "h" for help.'
+
+
+operations = {
+    'hello': hello,
+    'h': hlp,
+    'help': hlp,
+    'add': add,
+    'change': change,
+    'phone': phone_func,
+    'show all': show_all,
+    'good bye': goodbye,
+    'close': goodbye,
+    'exit': goodbye,
+    'delete': del_phone,
+    'search': search,
+    'sort': sorter,
+    'note_add': adding_note,
+    'note_delete': delete_note,
+    'note_edite': editing_note,
+    'tag_search': searching_by_tag,
+    'tag_sort': sorting_by_tags,
+    'birthday': list_record_to_x_day_bd,    
+}
 
 
 def main():
@@ -261,7 +270,7 @@ def main():
         if command:
             print(command(*params))
         else:
-            print(f'Sorry, unknown command, try again. Type "h" for help.')
+            print(incorrect_input(msg))
 
 
 if __name__ == '__main__':
