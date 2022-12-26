@@ -118,6 +118,9 @@ class Record:
             if el.value == phone:
                 self.phones.remove(el)
 
+    def remove_record(self, name: str):
+        self.data.pop(name)
+
     def days_to_birthday(self):
         today = datetime.date.today()
         birthday = self.birthday.value
