@@ -96,6 +96,11 @@ class Name(Field):
     pass
 
 
+class Address(Field):
+    """For address of contact"""
+    pass
+
+
 class Email(Field):
     """Необов'язкове поле з емайлом"""
 
@@ -151,7 +156,7 @@ class Record:
     """Відповідає за логіку додавання/видалення/редагування полів.
     А також реалізує метод розрахунку днів до наступного дня народження(якщо параметр задано для поля)"""
 
-    def __init__(self, name, phone=None, birthday=None, email=None):
+    def __init__(self, name, phone=None, birthday=None, email=None, address=None):
         self.name = Name(name)
         self.phones = [Phone(phone)] if phone else []
 
@@ -161,8 +166,23 @@ class Record:
         if email:
             self.email = Email(email)
 
+        if address:
+            self.address = Address(address)
+
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
+
+    def change_field(self, field_name, old_value, new_value):
+        if field_name == 'phones':
+            for el in self.phones:
+                if el.value == old_value:
+                    el.value = new_value
+        elif hasattr(self, field_name) and self.birthday == Birthday(old_value):
+            self.birthday = Birthday(new_value)
+        elif hasattr(self, field_name) and self.email == Email(old_value):
+            self.email = Email(new_value)
+        elif hasattr(self, field_name) and self.address == Address(old_value):
+            self.address = Address(new_value)
 
     def change_phone(self, old_phone, new_phone):
         for el in self.phones:

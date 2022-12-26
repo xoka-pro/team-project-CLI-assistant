@@ -41,11 +41,11 @@ def goodbye():
 
 
 @input_error
-def add(name, number, birthday=None, email=None) -> str:
+def add(name, number, birthday=None, email=None, address=None) -> str:
     """Функція для додавання нового запису або додавання нового телефону контакту"""
 
     if name not in CONTACTS:
-        new_number = Record(name, number, birthday, email)
+        new_number = Record(name, number, birthday, email, address)
         CONTACTS.add_record(new_number)
         CONTACTS.saver()
         return f'Contact add successfully'
@@ -68,8 +68,47 @@ def adding_note() -> str:
 
 
 @input_error
+def change_address(*args) -> str:
+    """Function to change address in contact"""
+
+    name, old_value, new_value, *_ = args
+    if name in CONTACTS:
+        CONTACTS[name].change_field('address', old_value, new_value)
+        CONTACTS.saver()
+    else:
+        return f'No contact "{name}"'
+    return f'Contact address change successfully'
+
+
+@input_error
+def change_birthday(*args) -> str:
+    """Function to change birthday in contact"""
+
+    name, old_value, new_value, *_ = args
+    if name in CONTACTS:
+        CONTACTS[name].change_field('birthday', old_value, new_value)
+        CONTACTS.saver()
+    else:
+        return f'No contact "{name}"'
+    return f'Contact birthday change successfully'
+
+
+@input_error
+def change_email(*args) -> str:
+    """Function to change email in contact"""
+
+    name, old_value, new_value, *_ = args
+    if name in CONTACTS:
+        CONTACTS[name].change_field('email', old_value, new_value)
+        CONTACTS.saver()
+    else:
+        return f'No contact "{name}"'
+    return f'Contact email change successfully'
+
+
+@input_error
 def change(*args) -> str:
-    """Функція для заміни номеру телефона контакту"""
+    """Function to change phone number in contact"""
 
     name, old_number, new_number, *_ = args
     if name in CONTACTS:
@@ -215,6 +254,9 @@ def hlp(*args) -> str:
     res = [("help", "this help"),
            ("add", "add new contact or new number for contact"),
            ("change", "change specified number for contact"),
+           ("change_address", "change specified address for contact"),
+           ("change_birthday", "change specified birthday for contact"),
+           ("change_email", "change specified email for contact"),
            ("phone", "show phone numbers for specified contact"),
            ("show_all", "show all contacts"),
            ("search", "search contacts by letters in name or digits in number"),
@@ -259,6 +301,9 @@ operations = {
     'help': hlp,
     'add': add,
     'change': change,
+    'change_address': change_address,
+    'change_birthday': change_birthday,
+    'change_email': change_email,
     'phone': phone_func,
     'show_all': show_all,
     'exit': goodbye,
