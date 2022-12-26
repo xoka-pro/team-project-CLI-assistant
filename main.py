@@ -252,6 +252,12 @@ operations = {
     'delete': del_phone,
     'search': search,
     'sort': sorter,
+    'note_add': adding_note,
+    'note_delete': delete_note,
+    'note_edite': editing_note,
+    'tag_search': searching_by_tag,
+    'tag_sort': sorting_by_tags,
+    'birthday': list_record_to_x_day_bd,    
 }
 
 

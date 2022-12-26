@@ -8,16 +8,21 @@ class Note:
     title (str) - коротка назва
     content (str) - все тіло нотатки
     data (datetime) - дата створення
+    tags (str) - теги
     """
 
-    def __init__(self, content: str):
-        self.title = content[:20]
+    def __init__(self, content: str, tags):
+
         self.content = content
         self.data = datetime.now()
+        self.tags = tags
+        if len(content) < 20:
+            self.title = content
+        self.title = content[:20]
 
     def __str__(self) -> str:
         """Модифікація виводу нотатки"""
-        return 'note: \n'+self.content+'\n insert '+self.data + '\n'
+        return 'note: \n' + self.content + '\n insert ' + self.data + '\n' + 'no tags' if not self.tags else self.tags + '\n'
 
     def find_text(self, text: str):
         """Пошук тексту в нотатці"""
@@ -36,42 +41,37 @@ class NoteBook(UserDict):
         """Внесення нової нотатки"""
         self.data[note.title] = note
 
-    def edit_note(self, title: str, new_content: str):
+    def edit_note(self, title, new_content: str):
         """Редагування нотатки знайденої за тайтлом"""
-        try:
-            note = self.data[title]
-            note.content = new_content
-        except KeyError:
-            f'There is no note with title "{title}".'
+        note = self.data[title]
+        note.content = new_content
+        self.data[title] = note
 
-    def del_note(self, title: str):
+
+    def delete_note(self, title: str):
         """Видалення нотатки знайденої за тайтлом"""
-        try:
-            del self.data[title]
+        del self.data[title].content
 
-        except KeyError:
-            f'There is no note with title "{title}".'
 
-    def save_before_close(self, fh=FILENAME):
+    def saver(self, fh=FILENAME):
         """Збереження словника нотатків до файлу"""
         with open(fh, 'wb') as file:
-            pickle.dump(self, file)
+            pickle.dump(self.data, file)
 
-    def load_saved_notebook(self, fh=FILENAME):
+    def loader(self, fh=FILENAME):
         """Завантаження словника нотатків з файлу"""
         try:
             with open(fh, 'rb') as file:
-                saved_book = pickle.load(file)
-            return saved_book
+                self.data = pickle.load(file)
 
         except FileNotFoundError:
-            return self
+            pass
 
     def find(self, text: str) -> set:
         """Пошук нотатків"""
         res_set = set()
         # пошук за тайтлом та чатиною його
-        for key in self.data.keys:
+        for key in self.data.keys():
             if text in key:
                 res_set.add(self.data.get(key))
 
@@ -80,3 +80,27 @@ class NoteBook(UserDict):
             if note_rec.find_text(text):
                 res_set.add(note_rec)
         return res_set
+
+    def search_by_tags(self, tag: str) -> list:
+        """Пошук за тегами"""
+        result = []
+        for note in self.data.values():
+            if note.tags:
+                if tag in note.tags:
+                    result.append(note.content)
+
+        return result
+
+    def sort_by_tags(self, tag: str) -> list:
+        """Сортування за тегами"""
+        all_tags = []
+        result = []
+        for note in self.data.values():
+            if note.tags:
+                for tag in note.tags:
+                    all_tags.append(tag)
+        all_tags.sort()
+        for rang_tag in all_tags:
+            result.extend(self.search_by_tags(rang_tag))
+
+        return result
