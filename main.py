@@ -2,6 +2,7 @@ from AddressBook import AddressBook, Record
 from NoteBook import NoteBook, Note
 from sorter import sorter
 import difflib
+from tabulate import tabulate
 
 CONTACTS = AddressBook()
 NOTES = NoteBook()
@@ -14,7 +15,7 @@ def input_error(func):
         try:
             return func(*args)
         except KeyError as error:
-            return f'No name in contacts. Error: {error}'
+            return f'Not found. Error: {error}'
         except IndexError as error:
             return f'Sorry, not enough params for command. Error: {error}'
         except ValueError as error:
@@ -29,8 +30,8 @@ def hello() -> str:
     """Функція для вітання користувача"""
     CONTACTS.loader()
     NOTES.loader()
-    return (f'How can I help you?\n'
-            f'Type "h" or "help" to show help')
+    return (f'Meow! How can I help you?\n'
+            f'Type "help" to show help')
 
 
 def goodbye():
@@ -89,6 +90,12 @@ def del_phone(name, phone) -> str:
     else:
         return f'No contact "{name}"'
     return f'Phone number deleted successfully'
+
+
+@input_error
+def delete_user(name):
+    CONTACTS.remove_record(name)
+    return f"User with name {name} was deleted"
 
 
 def delete_note() -> str:
@@ -205,21 +212,23 @@ def list_record_to_x_day_bd(*args) -> str:
 
 def hlp(*args) -> str:
     """Повертає коротку допомогу по командах"""
-    return (f'Known commands:\n'
-            f'hello, help -- this help\n'
-            f'add -- add new contact or new number for contact\n'
-            f'change -- change specified number for contact\n'
-            f'phone --  show phone numbers for specified contact\n'
-            f'show all -- show all contacts\n'
-            f'search -- search contacts by letters in name or digits in number\n'
-            f'delete -- delete specified number from contact\n'
-            f'good bye, close, exit -- shutdown application\n'
-            f'note_add -- add new note to the notebook\n'
-            'note_delete -- delete the note to the notebook\n'
-            'note_edite -- edite the note to the notebook\n'
-            'tag_search -- search all notes with the tag\n'
-            'tag_sort -- sort all notes by tags\n'
-            )
+    res = [("help", "this help"),
+           ("add", "add new contact or new number for contact"),
+           ("change", "change specified number for contact"),
+           ("phone", "show phone numbers for specified contact"),
+           ("show_all", "show all contacts"),
+           ("search", "search contacts by letters in name or digits in number"),
+           ("phone_delete", "delete specified number from contact"),
+           ("contact_delete", "delete specified contact"),
+           ("exit", "shutdown application"),
+           ("note_add", "add new note to the notebook"),
+           ("note_delete", "delete the note to the notebook"),
+           ("note_edite", "edite the note to the notebook"),
+           ("tag_search", "search all notes with the tag"),
+           ("tag_sort", "sort all notes by tags"),
+           ]
+    columns = ['Known commands', 'Description']
+    return tabulate(res, headers=columns, tablefmt='pipe')
 
 
 def parser(msg: str):
@@ -240,25 +249,21 @@ def parser(msg: str):
 def incorrect_input(msg):
     guess = difflib.get_close_matches(msg, operations.keys())
     if guess:
-        return f'Sorry, unknown command. Maybe you mean: {" ,".join(guess)}'
+        return f'Do you have paws too?) Maybe you mean: {" ,".join(guess)}'
     else:
-        return f'Sorry, unknown command, try again. Type "h" for help.'
+        return f"Sorry, I don't know this command. Type for help for help."
 
 
 operations = {
     'hello': hello,
-    'h': hlp,
     'help': hlp,
     'add': add,
     'change': change,
     'phone': phone_func,
-    'show all': show_all,
-    'good bye': goodbye,
-    'close': goodbye,
+    'show_all': show_all,
     'exit': goodbye,
-    'del phone': del_phone,
-    'delete': delete_user,
-    'del': delete_user,
+    'phone_delete': del_phone,
+    'contact_delete': delete_user,
     'search': search,
     'sort': sorter,
     'note_add': adding_note,
@@ -273,11 +278,16 @@ operations = {
 def main():
     """ Main function - all interaction with user """
     print(hello())
+    meow = 0
     while True:
         msg = input("Input command: ")
         command, params = parser(msg)
         if command:
             print(command(*params))
+            meow += 1
+            if meow == 4:
+                print('Meow!')
+                meow = 0
         else:
             print(incorrect_input(msg))
 
