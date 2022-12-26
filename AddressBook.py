@@ -1,5 +1,5 @@
 from collections import UserDict
-import datetime
+from datetime import datetime, date
 import pickle
 import control
 
@@ -27,18 +27,18 @@ class AddressBook(UserDict):
 
     def list_record_to_x_day_bd(self, day_to_birthday=0) -> list:
         list_of_record = []
-        today = datetime.date.today()
+        today = date.today()
         for record in self.data.values():
             # перевірка на наявність дати
-            if not record.birthday:
+            if not hasattr(record, 'birthday'):
                 continue
             birthday = record.birthday.value
 
             shift = (datetime(today.year, birthday.month,
-                     birthday.day).date() - today.date()).days
+                     birthday.day).date() - today).days
             if shift < 0:
                 shift = (datetime(today.year+1, birthday.month,
-                         birthday.day).date() - today.date()).days
+                         birthday.day).date() - today).days
 
             if shift <= day_to_birthday:
                 list_of_record.append(record)
@@ -133,7 +133,7 @@ class Birthday(Field):
         """Метод для валідації синтаксису дати народження"""
         if birthday:
             try:
-                return datetime.datetime.strptime(birthday, '%d-%m-%Y')
+                return datetime.strptime(birthday, '%d-%m-%Y')
             except ValueError:
                 print('Incorrect date format, should be DD-MM-YYYY')
         else:
@@ -172,13 +172,13 @@ class Record:
                 self.phones.remove(el)
 
     def days_to_birthday(self):
-        today = datetime.date.today()
+        today = date.today()
         birthday = self.birthday.value
-        next_birthday = datetime.date(
+        next_birthday = date(
             year=today.year, month=birthday.month, day=birthday.day)
 
         if next_birthday < today:
-            next_birthday = datetime.date(
+            next_birthday = date(
                 year=today.year + 1, month=birthday.month, day=birthday.day)
 
         delta = next_birthday - today

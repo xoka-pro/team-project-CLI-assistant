@@ -22,7 +22,7 @@ class Note:
 
     def __str__(self) -> str:
         """Модифікація виводу нотатки"""
-        return 'note: \n' + self.content + '\n insert ' + self.data + '\n'
+        return 'note: \n' + self.content + '\n insert ' + self.data + '\n' + 'no tags' if not self.tags else self.tags + '\n'
 
     def find_text(self, text: str):
         """Пошук тексту в нотатці"""

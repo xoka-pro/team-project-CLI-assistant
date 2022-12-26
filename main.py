@@ -39,11 +39,11 @@ def goodbye():
 
 
 @input_error
-def add(name, number, birthday=None) -> str:
+def add(name, number, birthday=None, email=None) -> str:
     """Функція для додавання нового запису або додавання нового телефону контакту"""
 
     if name not in CONTACTS:
-        new_number = Record(name, number, birthday)
+        new_number = Record(name, number, birthday, email)
         CONTACTS.add_record(new_number)
         CONTACTS.saver()
         return f'Contact add successfully'
@@ -120,7 +120,8 @@ def phone_func(*args) -> str:
     for el in CONTACTS.iterator(5):
         for name, data in el.items():
             if name == find_phone:
-                result.append(f'Name: {name} | Numbers: {", ".join(phone.value for phone in data.phones)}')
+                result.append(
+                    f'Name: {name} | Numbers: {", ".join(phone.value for phone in data.phones)}')
 
     if len(result) < 1:
         return f'No contact {find_phone}'
@@ -149,7 +150,8 @@ def show_all() -> str:
             if hasattr(data, 'birthday'):
                 bday = data.birthday.value.date().strftime('%d-%m-%Y')
                 to_birthday = CONTACTS[name].days_to_birthday()
-                result.append(f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
+                result.append(
+                    f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
             else:
                 result.append(f'Name: {name} | Numbers: {numbers}')
     if len(result) < 1:
@@ -170,9 +172,25 @@ def search(*args) -> str:
                 if hasattr(data, 'birthday'):
                     bday = data.birthday.value.date().strftime('%d-%m-%Y')
                     to_birthday = CONTACTS[name].days_to_birthday()
-                    result.append(f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
+                    result.append(
+                        f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
                 else:
                     result.append(f'Name: {name} | Numbers: {numbers}')
+    if len(result) < 1:
+        return f'No results'
+    return '\n'.join(result)
+
+
+@input_error
+def list_record_to_x_day_bd(*args) -> str:
+    """Функія формує текст зі списку днів народження в вказані дні"""
+    result = []
+    day = int(args[0])
+    for el in CONTACTS.list_record_to_x_day_bd(day):
+        numbers = ", ".join(phone.value for phone in el.phones)
+        bday = el.birthday.value.date().strftime('%d-%m-%Y')
+        result.append(
+            f'Name: {el.name.value} | Numbers: {numbers} | Birthday: {bday}')
     if len(result) < 1:
         return f'No results'
     return '\n'.join(result)
@@ -220,7 +238,8 @@ def parser(msg: str):
         'note_delete': delete_note,
         'note_edite': editing_note,
         'tag_search': searching_by_tag,
-        'tag_sort': sorting_by_tags
+        'tag_sort': sorting_by_tags,
+        'birthday': list_record_to_x_day_bd,
     }
 
     for key in operations:
