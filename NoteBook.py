@@ -47,11 +47,9 @@ class NoteBook(UserDict):
         note.content = new_content
         self.data[title] = note
 
-
     def delete_note(self, title: str):
         """Видалення нотатки знайденої за тайтлом"""
         del self.data[title].content
-
 
     def saver(self, fh=FILENAME):
         """Збереження словника нотатків до файлу"""
@@ -67,7 +65,7 @@ class NoteBook(UserDict):
         except FileNotFoundError:
             pass
 
-    def find(self, text: str) -> set:
+    def find_text(self, text: str) -> list:
         """Пошук нотатків"""
         res_set = set()
         # пошук за тайтлом та чатиною його
@@ -79,7 +77,7 @@ class NoteBook(UserDict):
         for note_rec in self.data.values():
             if note_rec.find_text(text):
                 res_set.add(note_rec)
-        return res_set
+        return list(res_set)
 
     def search_by_tags(self, tag: str) -> list:
         """Пошук за тегами"""

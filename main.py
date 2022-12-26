@@ -140,6 +140,12 @@ def phone_func(*args) -> str:
     return '\n'.join(result)
 
 
+def searching_by_word(word: str) -> str:
+    res = NOTES.find_text(word)
+    res = "\n".join(res)
+    return res
+
+
 def searching_by_tag(word: str) -> str:
     """Function to search by tag"""
     res = NOTES.search_by_tags(word)
@@ -227,6 +233,7 @@ def hlp(*args) -> str:
            ("note_edite", "edite the note to the notebook"),
            ("tag_search", "search all notes with the tag"),
            ("tag_sort", "sort all notes by tags"),
+           ("word_search", "search all notes with the word"),
            ]
     columns = ['Known commands', 'Description']
     return tabulate(res, headers=columns, tablefmt='pipe')
@@ -274,6 +281,7 @@ operations = {
     'tag_search': searching_by_tag,
     'tag_sort': sorting_by_tags,
     'birthday': list_record_to_x_day_bd,
+    'word_search': searching_by_word,
 }
 
 
