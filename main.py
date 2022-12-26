@@ -108,6 +108,12 @@ def delete_note() -> str:
     return f'I can not delete the note. There is no note with title "{title}".'
 
 
+@input_error
+def delete_user(name):
+    CONTACTS.remove_record(name)
+    return f"User with name {name} was deleted"
+
+
 def editing_note() -> str:
     title = input("Input at least 20 first chars of the note for editing: ")
     title = title[:20]
@@ -265,7 +271,7 @@ operations = {
     'note_edite': editing_note,
     'tag_search': searching_by_tag,
     'tag_sort': sorting_by_tags,
-    'birthday': list_record_to_x_day_bd,    
+    'birthday': list_record_to_x_day_bd,
 }
 
 
