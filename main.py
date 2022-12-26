@@ -27,7 +27,7 @@ def input_error(func):
 
 
 def hello() -> str:
-    """Функція для вітання користувача"""
+    """Function to greeting user"""
     CONTACTS.loader()
     NOTES.loader()
     return (f'Meow! How can I help you?\n'
@@ -35,15 +35,14 @@ def hello() -> str:
 
 
 def goodbye():
-    """Функція завершення програми"""
+    """Function to end program"""
     print(f'Good bye!')
     quit()
 
 
 @input_error
 def add(name, number, birthday=None, email=None, address=None) -> str:
-    """Функція для додавання нового запису або додавання нового телефону контакту"""
-
+    """Function to add new record or add new contact phone number"""
     if name not in CONTACTS:
         new_number = Record(name, number, birthday, email, address)
         CONTACTS.add_record(new_number)
@@ -56,6 +55,7 @@ def add(name, number, birthday=None, email=None, address=None) -> str:
 
 
 def adding_note() -> str:
+    """Function to add new note and tags"""
     text = input('Input text for the note: ')
     tags = input('Input tags for the note: ')
     tags = tags.split(" ")
@@ -121,7 +121,7 @@ def change(*args) -> str:
 
 @input_error
 def del_phone(name, phone) -> str:
-    """Функція видалення номера телефона у контакту"""
+    """Function to delete number phone in contact"""
 
     if name in CONTACTS:
         CONTACTS[name].del_phone(phone)
@@ -133,11 +133,13 @@ def del_phone(name, phone) -> str:
 
 @input_error
 def delete_user(name):
+    """Function to delete contact"""
     CONTACTS.remove_record(name)
     return f"User with name {name} was deleted"
 
 
 def delete_note() -> str:
+    """Function to delete note"""
     title = input("Input at least 20 first chars of the note for editing: ")
     title = title[:20]
     if NOTES.data.get(title):
@@ -147,13 +149,8 @@ def delete_note() -> str:
     return f'I can not delete the note. There is no note with title "{title}".'
 
 
-@input_error
-def delete_user(name):
-    CONTACTS.remove_record(name)
-    return f"User with name {name} was deleted"
-
-
 def editing_note() -> str:
+    """Function to edit note"""
     title = input("Input at least 20 first chars of the note for editing: ")
     title = title[:20]
     if NOTES.data.get(title):
@@ -166,7 +163,7 @@ def editing_note() -> str:
 
 @input_error
 def phone_func(*args) -> str:
-    """Повертає номер телефону для зазначеного контакту"""
+    """Returns the phone number for specified contact"""
 
     find_phone = args[0]
     result = []
@@ -181,20 +178,28 @@ def phone_func(*args) -> str:
     return '\n'.join(result)
 
 
+def searching_by_word(word: str) -> str:
+    res = NOTES.find_text(word)
+    res = "\n".join(res)
+    return res
+
+
 def searching_by_tag(word: str) -> str:
+    """Function to search by tag"""
     res = NOTES.search_by_tags(word)
     res = "\n".join(res)
     return res
 
 
 def sorting_by_tags(word: str) -> str:
+    """Function to sort by tags"""
     res = "\n".join(NOTES.sort_by_tags(word))
     return res
 
 
 @input_error
 def show_all() -> str:
-    """Повертає всю книгу контактів"""
+    """Return all contact book"""
 
     result = []
     for el in CONTACTS.iterator(5):
@@ -214,7 +219,7 @@ def show_all() -> str:
 
 @input_error
 def search(*args) -> str:
-    """Функія реалізовує пошук даних у книзі контактів"""
+    """Function implements data search in contact book"""
     result = []
     search_text = str(args[0]).lower()
     for el in CONTACTS.iterator(5):
@@ -236,7 +241,7 @@ def search(*args) -> str:
 
 @input_error
 def list_record_to_x_day_bd(*args) -> str:
-    """Функія формує текст зі списку днів народження в вказані дні"""
+    """Function generates text from list of birthdays on specified days"""
     result = []
     day = int(args[0])
     for el in CONTACTS.list_record_to_x_day_bd(day):
@@ -250,7 +255,8 @@ def list_record_to_x_day_bd(*args) -> str:
 
 
 def hlp(*args) -> str:
-    """Повертає коротку допомогу по командах"""
+    """Returns brief command help"""
+
     res = [("help", "this help"),
            ("add", "add new contact or new number for contact"),
            ("change", "change specified number for contact"),
@@ -268,6 +274,7 @@ def hlp(*args) -> str:
            ("note_edite", "edite the note to the notebook"),
            ("tag_search", "search all notes with the tag"),
            ("tag_sort", "sort all notes by tags"),
+           ("word_search", "search all notes with the word"),
            ]
     columns = ['Known commands', 'Description']
     return tabulate(res, headers=columns, tablefmt='pipe')
@@ -289,6 +296,7 @@ def parser(msg: str):
 
 
 def incorrect_input(msg):
+    """Function to check correctness"""
     guess = difflib.get_close_matches(msg, operations.keys())
     if guess:
         return f'Do you have paws too?) Maybe you mean: {" ,".join(guess)}'
@@ -317,6 +325,7 @@ operations = {
     'tag_search': searching_by_tag,
     'tag_sort': sorting_by_tags,
     'birthday': list_record_to_x_day_bd,
+    'word_search': searching_by_word,
 }
 
 
