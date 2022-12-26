@@ -2,8 +2,7 @@ from collections import UserDict
 from datetime import datetime, date
 import pickle
 import control
-
-FILENAME = 'contacts.dat'
+from constants import FILENAME_CONTACTS
 
 
 class AddressBook(UserDict):
@@ -64,14 +63,14 @@ class AddressBook(UserDict):
     def loader(self) -> None:
         """Функція завантажує дані з файлу, якщо він існує"""
         try:
-            with open(FILENAME, "rb") as file:
+            with open(FILENAME_CONTACTS, "rb") as file:
                 self.data = pickle.load(file)
         except FileNotFoundError:
             pass
 
     def saver(self) -> None:
         """Функція зберігає дані у файл"""
-        with open(FILENAME, "wb") as file:
+        with open(FILENAME_CONTACTS, "wb") as file:
             pickle.dump(self.data, file)
 
 
@@ -185,14 +184,14 @@ class Record:
             self.address = Address(new_value)
 
     def change_phone(self, old_phone, new_phone):
-        for el in self.phones:
-            if el.value == old_phone:
-                el.value = new_phone
+        for phone_number in self.phones:
+            if phone_number.value == old_phone:
+                phone_number.value = new_phone
 
     def del_phone(self, phone):
-        for el in self.phones:
-            if el.value == phone:
-                self.phones.remove(el)
+        for phone_number in self.phones:
+            if phone_number.value == phone:
+                self.phones.remove(phone_number)
 
     def days_to_birthday(self):
         today = date.today()
@@ -208,5 +207,5 @@ class Record:
 
         if delta.days == 0:
             return "birthday today!"
-        else:
-            return f'{delta.days} days to birthday'
+
+        return f'{delta.days} days to birthday'

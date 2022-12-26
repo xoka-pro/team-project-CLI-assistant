@@ -1,0 +1,9 @@
+FILENAME_CONTACTS = 'contacts.dat'
+
+FILENAME_NOTES = 'notebook.dat'
+
+IMAGES_SUFFIX = ('JPEG', 'PNG', 'JPG', 'SVG')
+DOCUMENTS_SUFFIX = ('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX', 'PPT')
+AUDIO_SUFFIX = ('MP3', 'OGG', 'WAV', 'AMR')
+VIDEO_SUFFIX = ('AVI', 'MP4', 'MOV', 'MKV')
+ARCHIVES_SUFFIX = ('ZIP', 'GZ', 'TAR')
