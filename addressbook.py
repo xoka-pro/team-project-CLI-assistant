@@ -1,5 +1,5 @@
 from datetime import datetime, date
-import control
+import re
 from mainbook import MainBook
 
 
@@ -30,7 +30,7 @@ class AddressBook(MainBook):
         today = date.today()
         for record in self.data.values():
             # перевірка на наявність дати
-            if not hasattr(record, 'birthday'):
+            if not record.birthday.value:
                 continue
             birthday = record.birthday.value
 
@@ -45,7 +45,7 @@ class AddressBook(MainBook):
         return list_of_record
 
     def search(self, value):
-        ''' A method that searching a contact in adressbook and return list with coincidences'''
+        """A method that searching a contact in adressbook and return list with coincidences"""
         record_result = []
         for record in self.data.values():
             if value in record.name.value:
@@ -90,8 +90,14 @@ class Email(Field):
 
     @classmethod
     def check_email(cls, email):
-        """Метод для валідації синтаксису email"""
-        if not control.check_email(email):
+        """validation email
+        if first haven't !#$%^&*() and one @
+        domains from 1-63 len and 1st domen name just letter 1-6 len
+        """
+        parse = re.search(
+            r"^(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}$",
+            email)
+        if not parse:
             raise ValueError(
                 'Incorrect email format')
         return email
@@ -106,8 +112,14 @@ class Phone(Field):
 
     @classmethod
     def check_phone(cls, phone):
-        """Метод для валідації синтаксису номера телефона"""
-        if not control.check_phone(phone):
+        """Validation phone number for match some mask:
+        +380991112233 or 099-111-22-33 or 099-111-2233 or 0991112233
+        or (099)1112233 or (099)111-22-33 or (099)111-2233"""
+
+        parse = re.search(
+            r"\d{3}\-\d{3}\-\d{2}\-\d{2}|\d{3}\-\d{3}\-\d{4}|\(\d{3}\)\d{3}\-\d{2}\-\d{2}|\(\d{3}\)\d{3}\-\d{4}|\(\d{3}\)\d{7}|\d{10}|\+\d{12}$",
+            phone)
+        if not parse:
             raise ValueError(
                 'Incorrect phone format, should be: \n + 380991112233 or 099-111-22-33 or 099-111-2233 or 0991112233 \n or (099)1112233 or (099)111-22-33 or (099)111-2233')
         return phone
@@ -143,29 +155,23 @@ class Record:
     def __init__(self, name, phone=None, birthday=None, email=None, address=None):
         self.name = Name(name)
         self.phones = [Phone(phone)] if phone else []
-
-        if birthday:
-            self.birthday = Birthday(birthday)
-
-        if email:
-            self.email = Email(email)
-
-        if address:
-            self.address = Address(address)
+        self.birthday = Birthday(birthday)
+        self.email = Email(email)
+        self.address = Address(address)
 
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
 
     def change_field(self, field_name, old_value, new_value):
         if field_name == 'phones':
-            for el in self.phones:
-                if el.value == old_value:
-                    el.value = new_value
-        elif hasattr(self, field_name) and self.birthday == Birthday(old_value):
+            for phone in self.phones:
+                if phone.value == old_value:
+                    phone.value = new_value
+        elif field_name == 'birthday':
             self.birthday = Birthday(new_value)
-        elif hasattr(self, field_name) and self.email == Email(old_value):
+        elif field_name == 'email':
             self.email = Email(new_value)
-        elif hasattr(self, field_name) and self.address == Address(old_value):
+        elif field_name == 'address':
             self.address = Address(new_value)
 
     def change_phone(self, old_phone, new_phone):
