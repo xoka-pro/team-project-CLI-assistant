@@ -58,6 +58,7 @@ def add(name, number, birthday=None, email=None, address=None) -> str:
         return f'New number added to {name}'
 
 
+@input_error
 def adding_note() -> str:
     """Function to add new note and tags"""
     text = input('Input text for the note: ')
@@ -142,6 +143,7 @@ def delete_user(name):
     return f"User with name {name} was deleted"
 
 
+@input_error
 def delete_note() -> str:
     """Function to delete note"""
     title = input("Input at least 20 first chars of the note for editing: ")
@@ -153,6 +155,7 @@ def delete_note() -> str:
     return f'I can not delete the note. There is no note with title "{title}".'
 
 
+@input_error
 def editing_note() -> str:
     """Function to edit note"""
     title = input("Input at least 20 first chars of the note for editing: ")
@@ -181,10 +184,16 @@ def phone_func(*args) -> str:
     return tabulate(result, headers=columns, tablefmt='psql')
 
 
+@input_error
 def searching_by_word(word: str) -> str:
     res = NOTES.find_text(word)
-    res = "\n".join(res)
-    return res
+    result = ""
+    if not len(res):
+        return 'Nothing find'
+    else:
+        for cur_note in res:
+            result += str(cur_note)
+        return result
 
 
 def searching_by_tag(word: str) -> str:
@@ -211,7 +220,8 @@ def show_all() -> str:
             bday = data.birthday.value.date().strftime('%d-%m-%Y')
         else:
             bday = None
-        result.append([name, numbers, bday, data.email.value, data.address.value])
+        result.append(
+            [name, numbers, bday, data.email.value, data.address.value])
     if len(result) < 1:
         return f'Contact list is empty'
     columns = ['Name', 'Phones', 'Birthday', 'E-mail', 'Address']
@@ -231,7 +241,8 @@ def search(*args) -> str:
                 bday = data.birthday.value.date().strftime('%d-%m-%Y')
             else:
                 bday = None
-            result.append([name, numbers, bday, data.email.value, data.address.value])
+            result.append(
+                [name, numbers, bday, data.email.value, data.address.value])
     if len(result) < 1:
         return f'No results'
     columns = ['Name', 'Phones', 'Birthday', 'E-mail', 'Address']
