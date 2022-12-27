@@ -1,11 +1,9 @@
-from collections import UserDict
 from datetime import datetime, date
-import pickle
 import control
-from constants import FILENAME_CONTACTS
+from mainbook import MainBook
 
 
-class AddressBook(UserDict):
+class AddressBook(MainBook):
     """Клас AddressBook - зберігає, додає записи та віддає записи книги контактів через ітератор"""
 
     def add_record(self, record):
@@ -59,19 +57,6 @@ class AddressBook(UserDict):
         if not record_result:
             raise ValueError('Contact does not exist')
         return record_result
-
-    def loader(self) -> None:
-        """Функція завантажує дані з файлу, якщо він існує"""
-        try:
-            with open(FILENAME_CONTACTS, "rb") as file:
-                self.data = pickle.load(file)
-        except FileNotFoundError:
-            pass
-
-    def saver(self) -> None:
-        """Функція зберігає дані у файл"""
-        with open(FILENAME_CONTACTS, "wb") as file:
-            pickle.dump(self.data, file)
 
 
 class Field:
