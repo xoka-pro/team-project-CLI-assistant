@@ -276,7 +276,7 @@ def hlp(*args) -> str:
            ("word_search", "search all notes with the word"),
            ]
     columns = ['Known commands', 'Description']
-    return tabulate(res, headers=columns, tablefmt='pipe')
+    return tabulate(res, headers=columns, tablefmt='psql')
 
 
 def parser(msg: str):
