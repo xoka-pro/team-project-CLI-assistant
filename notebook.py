@@ -1,7 +1,5 @@
-from collections import UserDict
-import pickle
 from datetime import datetime
-from constants import FILENAME_NOTES
+from mainbook import MainBook
 
 
 class Note:
@@ -33,7 +31,7 @@ class Note:
             return False
 
 
-class NoteBook(UserDict):
+class NoteBook(MainBook):
     """Клас для зберігання нотатків"""
 
     def add_note(self, note: Note):
@@ -49,20 +47,6 @@ class NoteBook(UserDict):
     def delete_note(self, title: str):
         """Видалення нотатки знайденої за тайтлом"""
         del self.data[title].content
-
-    def saver(self, fh=FILENAME_NOTES):
-        """Збереження словника нотатків до файлу"""
-        with open(fh, 'wb') as file:
-            pickle.dump(self.data, file)
-
-    def loader(self, fh=FILENAME_NOTES):
-        """Завантаження словника нотатків з файлу"""
-        try:
-            with open(fh, 'rb') as file:
-                self.data = pickle.load(file)
-
-        except FileNotFoundError:
-            pass
 
     def find_text(self, text: str) -> list:
         """Пошук нотатків"""

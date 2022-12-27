@@ -6,6 +6,9 @@ from tabulate import tabulate
 import holidays
 from datetime import date
 
+from constants import FILENAME_CONTACTS
+from constants import FILENAME_NOTES
+
 CONTACTS = AddressBook()
 NOTES = NoteBook()
 
@@ -47,11 +50,11 @@ def add(name, number, birthday=None, email=None, address=None) -> str:
     if name not in CONTACTS:
         new_number = Record(name, number, birthday, email, address)
         CONTACTS.add_record(new_number)
-        CONTACTS.saver()
+        CONTACTS.saver(FILENAME_CONTACTS)
         return f'Contact add successfully'
     else:
         CONTACTS[name].add_phone(number)
-        CONTACTS.saver()
+        CONTACTS.saver(FILENAME_CONTACTS)
         return f'New number added to {name}'
 
 
@@ -62,7 +65,7 @@ def adding_note() -> str:
     tags = tags.split(" ")
     note = Note(text, tags)
     NOTES.add_note(note)
-    NOTES.saver()
+    NOTES.saver(FILENAME_NOTES)
     if note.tags:
         return f'New note with tags added'
     return f'New note added'
@@ -75,7 +78,7 @@ def change_address(*args) -> str:
     name, old_value, new_value, *_ = args
     if name in CONTACTS:
         CONTACTS[name].change_field('address', old_value, new_value)
-        CONTACTS.saver()
+        CONTACTS.saver(FILENAME_CONTACTS)
     else:
         return f'No contact "{name}"'
     return f'Contact address change successfully'
@@ -88,7 +91,7 @@ def change_birthday(*args) -> str:
     name, old_value, new_value, *_ = args
     if name in CONTACTS:
         CONTACTS[name].change_field('birthday', old_value, new_value)
-        CONTACTS.saver()
+        CONTACTS.saver(FILENAME_CONTACTS)
     else:
         return f'No contact "{name}"'
     return f'Contact birthday change successfully'
@@ -101,7 +104,7 @@ def change_email(*args) -> str:
     name, old_value, new_value, *_ = args
     if name in CONTACTS:
         CONTACTS[name].change_field('email', old_value, new_value)
-        CONTACTS.saver()
+        CONTACTS.saver(FILENAME_CONTACTS)
     else:
         return f'No contact "{name}"'
     return f'Contact email change successfully'
@@ -114,7 +117,7 @@ def change(*args) -> str:
     name, old_number, new_number, *_ = args
     if name in CONTACTS:
         CONTACTS[name].change_phone(old_number, new_number)
-        CONTACTS.saver()
+        CONTACTS.saver(FILENAME_CONTACTS)
     else:
         return f'No contact "{name}"'
     return f'Contact change successfully'
@@ -126,7 +129,7 @@ def del_phone(name, phone) -> str:
 
     if name in CONTACTS:
         CONTACTS[name].del_phone(phone)
-        CONTACTS.saver()
+        CONTACTS.saver(FILENAME_CONTACTS)
     else:
         return f'No contact "{name}"'
     return f'Phone number deleted successfully'
@@ -145,7 +148,7 @@ def delete_note() -> str:
     title = title[:20]
     if NOTES.data.get(title):
         NOTES.delete_note(title)
-        NOTES.saver()
+        NOTES.saver(FILENAME_NOTES)
         return f'Note deleted successfully'
     return f'I can not delete the note. There is no note with title "{title}".'
 
@@ -157,7 +160,7 @@ def editing_note() -> str:
     if NOTES.data.get(title):
         new_text = input("Input the new text of note: ")
         NOTES.edit_note(title, new_text)
-        NOTES.saver()
+        NOTES.saver(FILENAME_NOTES)
         return f'Note changed successfully'
     return f'I can not change the note. There is no note with title "{title}".'
 
@@ -305,7 +308,7 @@ def hlp(*args) -> str:
            ("holiday X", "list of holidays in Ukraine today or X days"),
            ]
     columns = ['Known commands', 'Description']
-    return tabulate(res, headers=columns, tablefmt='pipe')
+    return tabulate(res, headers=columns, tablefmt='psql')
 
 
 def parser(msg: str):
@@ -359,5 +362,5 @@ operations = {
 
 
 def startup_loader():
-    CONTACTS.loader()
-    NOTES.loader()
+    CONTACTS.loader(FILENAME_CONTACTS)
+    NOTES.loader(FILENAME_NOTES)
