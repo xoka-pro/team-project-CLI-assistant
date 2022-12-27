@@ -25,10 +25,7 @@ class Note:
 
     def find_text(self, text: str):
         """Пошук тексту в нотатці"""
-        if -1 != self.content.find(text):
-            return True
-        else:
-            return False
+        return -1 != self.content.find(text)
 
 
 class NoteBook(MainBook):
