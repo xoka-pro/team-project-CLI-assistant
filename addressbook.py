@@ -13,7 +13,7 @@ class AddressBook(MainBook):
         self.data.pop(name)
 
     def iterator(self, count: int):
-        for key, value in self:
+        for key, value in self.data.items():
             i = 1
             container = {}
             while i <= count:
@@ -22,8 +22,7 @@ class AddressBook(MainBook):
             yield container
 
     def __iter__(self):
-        for key, value in self.data.items():
-            yield key, value
+        return self
 
     def list_record_to_x_day_bd(self, day_to_birthday=0) -> list:
         list_of_record = []
