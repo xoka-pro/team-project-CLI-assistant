@@ -12,18 +12,6 @@ class AddressBook(MainBook):
     def remove_record(self, name: str):
         self.data.pop(name)
 
-    def iterator(self, count: int):
-        for key, value in self.data.items():
-            i = 1
-            container = {}
-            while i <= count:
-                container[key] = value
-                i += 1
-            yield container
-
-    def __iter__(self):
-        return self
-
     def list_record_to_x_day_bd(self, day_to_birthday=0) -> list:
         list_of_record = []
         today = date.today()

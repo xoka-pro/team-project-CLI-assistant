@@ -171,15 +171,14 @@ def phone_func(*args) -> str:
 
     find_phone = args[0]
     result = []
-    for el in CONTACTS.iterator(5):
-        for name, data in el.items():
-            if name == find_phone:
-                result.append(
-                    f'Name: {name} | Numbers: {", ".join(phone.value for phone in data.phones)}')
-
+    for name, data in CONTACTS.data.items():
+        if name == find_phone:
+            numbers = ", ".join(phone.value for phone in data.phones)
+            result.append((name, numbers))
     if len(result) < 1:
         return f'No contact {find_phone}'
-    return '\n'.join(result)
+    columns = ['Name', 'Phones']
+    return tabulate(result, headers=columns, tablefmt='psql')
 
 
 def searching_by_word(word: str) -> str:
@@ -206,19 +205,17 @@ def show_all() -> str:
     """Return all contact book"""
 
     result = []
-    for el in CONTACTS.iterator(5):
-        for name, data in el.items():
-            numbers = ", ".join(phone.value for phone in data.phones)
-            if hasattr(data, 'birthday'):
-                bday = data.birthday.value.date().strftime('%d-%m-%Y')
-                to_birthday = CONTACTS[name].days_to_birthday()
-                result.append(
-                    f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
-            else:
-                result.append(f'Name: {name} | Numbers: {numbers}')
+    for name, data in CONTACTS.data.items():
+        numbers = ", ".join(phone.value for phone in data.phones)
+        if data.birthday.value:
+            bday = data.birthday.value.date().strftime('%d-%m-%Y')
+        else:
+            bday = None
+        result.append([name, numbers, bday, data.email.value, data.address.value])
     if len(result) < 1:
         return f'Contact list is empty'
-    return '\n'.join(result)
+    columns = ['Name', 'Phones', 'Birthday', 'E-mail', 'Address']
+    return tabulate(result, headers=columns, tablefmt='psql')
 
 
 @input_error
@@ -226,21 +223,19 @@ def search(*args) -> str:
     """Function implements data search in contact book"""
     result = []
     search_text = str(args[0]).lower()
-    for el in CONTACTS.iterator(5):
-        for name, data in el.items():
-            numbers = ", ".join(phone.value for phone in data.phones)
-            if str(name).lower().find(search_text) >= 0 or \
-                    numbers.find(search_text) >= 0:
-                if hasattr(data, 'birthday'):
-                    bday = data.birthday.value.date().strftime('%d-%m-%Y')
-                    to_birthday = CONTACTS[name].days_to_birthday()
-                    result.append(
-                        f'Name: {name} | Numbers: {numbers} | Birthday: {bday} - {to_birthday}')
-                else:
-                    result.append(f'Name: {name} | Numbers: {numbers}')
+    for name, data in CONTACTS.data.items():
+        numbers = ", ".join(phone.value for phone in data.phones)
+        if str(name).lower().find(search_text) >= 0 or \
+                numbers.find(search_text) >= 0:
+            if data.birthday.value:
+                bday = data.birthday.value.date().strftime('%d-%m-%Y')
+            else:
+                bday = None
+            result.append([name, numbers, bday, data.email.value, data.address.value])
     if len(result) < 1:
         return f'No results'
-    return '\n'.join(result)
+    columns = ['Name', 'Phones', 'Birthday', 'E-mail', 'Address']
+    return tabulate(result, headers=columns, tablefmt='psql')
 
 
 @input_error
@@ -248,17 +243,16 @@ def list_record_to_x_day_bd(*args) -> str:
     """Function generates text from list of birthdays on specified days"""
     result = []
     day = int(args[0])
-    for el in CONTACTS.list_record_to_x_day_bd(day):
-        numbers = ", ".join(phone.value for phone in el.phones)
-        bday = el.birthday.value.date().strftime('%d-%m-%Y')
-        result.append(
-            f'Name: {el.name.value} | Numbers: {numbers} | Birthday: {bday}')
+    for user in CONTACTS.list_record_to_x_day_bd(day):
+        bday = user.birthday.value.date().strftime('%d-%m-%Y')
+        result.append((user.name.value, bday))
     if len(result) < 1:
         return f'No results'
-    return '\n'.join(result)
+    columns = ['Name', 'Birthday']
+    return tabulate(result, headers=columns, tablefmt='psql')
 
 
-def today_holiday(*args) -> str:
+def today_holiday(*args):
     if len(args):
         day = int(args[0])
     else:
@@ -267,13 +261,13 @@ def today_holiday(*args) -> str:
     if day:
         result = []
         d_start = date.today().toordinal()
-        for iter in range(d_start, d_start+day):
-            res = ua_holidays.get(date.fromordinal(iter))
-            if not res is None:
-                result.append(date.fromordinal(iter).strftime('%d-%m-%Y'))
-                result.append(res)
+        for el in range(d_start, d_start+day):
+            res = ua_holidays.get(date.fromordinal(el))
+            if res:
+                result.append((date.fromordinal(el).strftime('%d-%m-%Y'), res))
         if len(result):
-            return '\n'.join(result)
+            columns = ['Date', 'Name']
+            return tabulate(result, headers=columns, tablefmt='psql')
         else:
             return 'No holiday in period'
     else:
@@ -300,7 +294,7 @@ def hlp(*args) -> str:
            ("exit", "shutdown application"),
            ("note_add", "add new note to the notebook"),
            ("note_delete", "delete the note to the notebook"),
-           ("note_edite", "edite the note to the notebook"),
+           ("note_edit", "edite the note to the notebook"),
            ("tag_search", "search all notes with the tag"),
            ("tag_sort", "sort all notes by tags"),
            ("word_search", "search all notes with the word"),
@@ -330,7 +324,7 @@ def incorrect_input(msg):
     """Function to check correctness"""
     guess = difflib.get_close_matches(msg, operations.keys())
     if guess:
-        return f'Do you have paws too?) Maybe you mean: {" ,".join(guess)}'
+        return f'Do you have paws too? Maybe you mean: {" ,".join(guess)}'
     else:
         return f"Sorry, I don't know this command. Type for help for help."
 
@@ -352,7 +346,7 @@ operations = {
     'sort': sorter,
     'note_add': adding_note,
     'note_delete': delete_note,
-    'note_edite': editing_note,
+    'note_edit': editing_note,
     'tag_search': searching_by_tag,
     'tag_sort': sorting_by_tags,
     'birthday': list_record_to_x_day_bd,
