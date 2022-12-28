@@ -329,6 +329,7 @@ def hlp(*args) -> str:
            ("birthday X", "list of contact with birthday in X days"),
            ("holiday X", "list of holidays in Ukraine today or X days"),
            ("weather X", "show weather in city X"),
+           ("sort X", "sorting files in directory X"),
            ]
     columns = ['Known commands', 'Description']
     return tabulate(res, headers=columns, tablefmt='psql')
