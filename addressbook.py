@@ -4,7 +4,7 @@ from mainbook import MainBook
 
 
 class AddressBook(MainBook):
-    """Клас AddressBook - зберігає, додає записи та віддає записи книги контактів через ітератор"""
+    """Class AddressBook - general class for contact book"""
 
     def add_record(self, record):
         self.data[record.name.value] = record
@@ -47,7 +47,7 @@ class AddressBook(MainBook):
 
 
 class Field:
-    """Батьківський клас для всіх записів у книзі контактів"""
+    """Parent class for all fields in contact book"""
 
     def __init__(self, value):
         self._value = None
@@ -63,7 +63,7 @@ class Field:
 
 
 class Name(Field):
-    """Обов'язкове поле з ім'ям в книзі контактів"""
+    """Key field with name in contact book"""
     pass
 
 
@@ -73,7 +73,7 @@ class Address(Field):
 
 
 class Email(Field):
-    """Необов'язкове поле з емайлом"""
+    """Field with email"""
 
     @classmethod
     def check_email(cls, email):
@@ -95,7 +95,7 @@ class Email(Field):
 
 
 class Phone(Field):
-    """Необов'язкове поле з номером телефону(або кількома)"""
+    """Field with phone number(s)"""
 
     @classmethod
     def check_phone(cls, phone):
@@ -117,11 +117,11 @@ class Phone(Field):
 
 
 class Birthday(Field):
-    """Необов'язкове поле з датою народження"""
+    """Field with birthday"""
 
     @classmethod
     def check_date(cls, birthday):
-        """Метод для валідації синтаксису дати народження"""
+        """Validation birthday format"""
         if birthday:
             try:
                 return datetime.strptime(birthday, '%d-%m-%Y')
@@ -136,8 +136,7 @@ class Birthday(Field):
 
 
 class Record:
-    """Відповідає за логіку додавання/видалення/редагування полів.
-    А також реалізує метод розрахунку днів до наступного дня народження(якщо параметр задано для поля)"""
+    """Logic for fields"""
 
     def __init__(self, name, phone=None, birthday=None, email=None, address=None):
         self.name = Name(name)

@@ -3,11 +3,11 @@ from mainbook import MainBook
 
 
 class Note:
-    """Клас для нотатків
-    title (str) - коротка назва
-    content (str) - все тіло нотатки
-    data (datetime) - дата створення
-    tags (str) - теги
+    """Notes class
+    title (str) - short name
+    content (str) - full note
+    data (datetime) - creation date
+    tags (str) - tags
     """
 
     def __init__(self, content: str, tags):
@@ -20,49 +20,49 @@ class Note:
         self.title = content[:20]
 
     def __str__(self) -> str:
-        """Модифікація виводу нотатки"""
+        """Modification note output"""
         format_data = self.data.strftime('%d-%m-%Y')
         tag_text = 'no tags' if not self.tags else ','.join(self.tags)
         return f'note: {self.title}\n{self.content}\ninsert: {format_data}\nTAGS: {tag_text}'
 
     def find_text(self, text: str):
-        """Пошук тексту в нотатці"""
+        """Find text in note"""
         return -1 != self.content.find(text)
 
 
 class NoteBook(MainBook):
-    """Клас для зберігання нотатків"""
+    """Class for saving notes"""
 
     def add_note(self, note: Note):
-        """Внесення нової нотатки"""
+        """Adding new note"""
         self.data[note.title] = note
 
     def edit_note(self, title, new_content: str):
-        """Редагування нотатки знайденої за тайтлом"""
+        """Editing note found by title"""
         note = self.data[title]
         note.content = new_content
         self.data[title] = note
 
     def delete_note(self, title: str):
-        """Видалення нотатки знайденої за тайтлом"""
+        """Deleting note by title"""
         del self.data[title].content
 
     def find_text(self, text: str) -> list:
-        """Пошук нотатків"""
+        """Notes search"""
         res_set = set()
-        # пошук за тайтлом та чатиною його
+        # search by title
         for key in self.data.keys():
             if text in key:
                 res_set.add(self.data.get(key))
 
-        # пошук за частиною з загального тексту
+        # search by text
         for note_rec in self.data.values():
             if note_rec.find_text(text):
                 res_set.add(note_rec)
         return list(res_set)
 
     def search_by_tags(self, tag: str) -> list:
-        """Пошук за тегами"""
+        """Search by tags"""
         result = []
         for note in self.data.values():
             if note.tags:
@@ -71,8 +71,8 @@ class NoteBook(MainBook):
 
         return result
 
-    def sort_by_tags(self, tag: str) -> list:
-        """Сортування за тегами"""
+    def sort_by_tags(self) -> list:
+        """Sorting by tags"""
         all_tags = []
         result = []
         for note in self.data.values():
