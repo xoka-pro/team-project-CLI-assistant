@@ -3,14 +3,15 @@ from collections import UserDict
 
 
 class MainBook(UserDict):
+    """Parent class for notebook and contact book"""
 
     def saver(self, fh):
-        """Збереження словника книги до файлу"""
+        """Saving data to file"""
         with open(fh, 'wb') as file:
             pickle.dump(self.data, file)
 
     def loader(self, fh):
-        """Завантаження словника книги з файлу"""
+        """Load data from file"""
         try:
             with open(fh, 'rb') as file:
                 self.data = pickle.load(file)

@@ -211,9 +211,9 @@ def searching_by_tag(word: str) -> str:
     return res
 
 
-def sorting_by_tags(word: str) -> str:
+def sorting_by_tags() -> str:
     """Function to sort by tags"""
-    notes_list = list(map(str,NOTES.sort_by_tags(word)))
+    notes_list = list(map(str, NOTES.sort_by_tags()))
     res = "\n" + "\n\n".join(notes_list) + "\n"
     return res
 
