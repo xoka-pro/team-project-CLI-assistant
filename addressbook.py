@@ -142,9 +142,9 @@ class Record:
     def __init__(self, name, phone=None, birthday=None, email=None, address=None):
         self.name = Name(name)
         self.phones = [Phone(phone)] if phone else []
-        self.birthday = Birthday(birthday)
-        self.email = Email(email)
-        self.address = Address(address)
+        self.birthday = Birthday(birthday) if birthday else ""
+        self.email = Email(email) if email else ""
+        self.address = Address(address) if address else ""
 
     def add_phone(self, phone):
         self.phones.append(Phone(phone))

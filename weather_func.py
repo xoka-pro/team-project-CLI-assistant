@@ -1,6 +1,6 @@
 from pyowm import OWM
 from pyowm.commons.exceptions import NotFoundError
-WEATHER_API = OWM('** OUR API code**')
+WEATHER_API = OWM('')
 
 
 def input_error(func):
@@ -22,20 +22,15 @@ def get_weather(args: list):
     observe = manager.weather_at_place(city)
     country = observe.to_dict()['location']['country']
     if country == "RU":
-        return "!!! FUCK RUSSIA - WE NOT WORKS WITH TERRORISTS\nEnter the city again"
-    elif city == 'exit':
-        return 'BYE!'
+        return "WE NOT WORKS WITH TERRORISTS! Enter the city again."
     else:
         w = observe.weather
         temp = w.temperature('celsius')
 
-    return f"""Hello, friend! Weather in {city}.
-    Temperature is {temp} C.
+    return f"""
+    Weather in {city}.
+    Temperature is {temp['temp']} C.
     Feels like: {temp['feels_like']} C.
-    Status: {w.status} """
+    Status: {w.status} 
+    """
 
-
-# '''For tests use your API key'''
-# print(get_weather('Dnipro'))
-# print(get_weather("BArabulka"))
-# print(get_weather('Moscow'))

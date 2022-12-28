@@ -5,6 +5,7 @@ import difflib
 from tabulate import tabulate
 import holidays
 from datetime import date
+from weather_func import get_weather
 
 from constants import FILENAME_CONTACTS
 from constants import FILENAME_NOTES
@@ -44,15 +45,22 @@ def goodbye():
 
 
 @input_error
-def add(name, number, birthday=None, email=None, address=None) -> str:
+def add(name=None, number=None, birthday=None, email=None, address=None) -> str:
     """Function to add new record or add new contact phone number"""
-
+    name = input('Input contact name: ')
     if name not in CONTACTS:
+        print('Adding new contact')
+        number = input('Input phone number: ')
+        birthday = input('Input birthday(DD-MM-YYY): ')
+        email = input('Input email: ')
+        address = input('Input address: ')
         new_number = Record(name, number, birthday, email, address)
         CONTACTS.add_record(new_number)
         CONTACTS.saver(FILENAME_CONTACTS)
         return f'Contact add successfully'
     else:
+        print(f'Contact {name} already exist. Adding new number')
+        number = input('Input new phone number: ')
         CONTACTS[name].add_phone(number)
         CONTACTS.saver(FILENAME_CONTACTS)
         return f'New number added to {name}'
@@ -216,12 +224,10 @@ def show_all() -> str:
     result = []
     for name, data in CONTACTS.data.items():
         numbers = ", ".join(phone.value for phone in data.phones)
-        if data.birthday.value:
-            bday = data.birthday.value.date().strftime('%d-%m-%Y')
-        else:
-            bday = None
-        result.append(
-            [name, numbers, bday, data.email.value, data.address.value])
+        bday = data.birthday.value.date().strftime('%d-%m-%Y') if data.birthday else None
+        email = data.email.value if data.email else None
+        address = data.address.value if data.address else None
+        result.append([name, numbers, bday, email, address])
     if len(result) < 1:
         return f'Contact list is empty'
     columns = ['Name', 'Phones', 'Birthday', 'E-mail', 'Address']
@@ -292,8 +298,8 @@ def hlp(*args) -> str:
     """Returns brief command help"""
 
     res = [("help", "this help"),
-           ("add", "add new contact or new number for contact"),
-           ("change", "change specified number for contact"),
+           ("add_contact", "add new contact or new number for contact"),
+           ("change_phone", "change specified number for contact"),
            ("change_address", "change specified address for contact"),
            ("change_birthday", "change specified birthday for contact"),
            ("change_email", "change specified email for contact"),
@@ -311,6 +317,7 @@ def hlp(*args) -> str:
            ("word_search", "search all notes with the word"),
            ("birthday X", "list of contact with birthday in X days"),
            ("holiday X", "list of holidays in Ukraine today or X days"),
+           ("weather X", "show weather in city X"),
            ]
     columns = ['Known commands', 'Description']
     return tabulate(res, headers=columns, tablefmt='psql')
@@ -335,7 +342,7 @@ def incorrect_input(msg):
     """Function to check correctness"""
     guess = difflib.get_close_matches(msg, operations.keys())
     if guess:
-        return f'Do you have paws too? Maybe you mean: {" ,".join(guess)}'
+        return f'Do you have paws too? Maybe you mean: {", ".join(guess)}'
     else:
         return f"Sorry, I don't know this command. Type for help for help."
 
@@ -343,8 +350,8 @@ def incorrect_input(msg):
 operations = {
     'hello': hello,
     'help': hlp,
-    'add': add,
-    'change': change,
+    'add_contact': add,
+    'change_phone': change,
     'change_address': change_address,
     'change_birthday': change_birthday,
     'change_email': change_email,
@@ -363,6 +370,7 @@ operations = {
     'birthday': list_record_to_x_day_bd,
     'word_search': searching_by_word,
     'holiday': today_holiday,
+    'weather': get_weather,
 }
 
 
