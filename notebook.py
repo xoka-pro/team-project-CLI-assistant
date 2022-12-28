@@ -45,7 +45,7 @@ class NoteBook(MainBook):
 
     def delete_note(self, title: str):
         """Deleting note by title"""
-        del self.data[title].content
+        del self.data[title]
 
     def find_text(self, text: str) -> list:
         """Notes search"""

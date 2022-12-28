@@ -133,7 +133,7 @@ def change(*args) -> str:
 
 
 @input_error
-def del_phone(name, phone) -> str:
+def delete_phone(name, phone) -> str:
     """Function to delete number phone in contact"""
 
     if name in CONTACTS:
@@ -204,6 +204,7 @@ def searching_by_word(word: str) -> str:
         return result
 
 
+@input_error
 def searching_by_tag(word: str) -> str:
     """Function to search by tag"""
     notes_list = list(map(str,NOTES.search_by_tags(word)))
@@ -315,7 +316,7 @@ def hlp(*args) -> str:
            ("phone", "show phone numbers for specified contact"),
            ("show_all", "show all contacts"),
            ("search", "search contacts by letters in name or digits in number"),
-           ("phone_delete", "delete specified number from contact"),
+           ("delete_phone", "delete specified number from contact"),
            ("contact_delete", "delete specified contact"),
            ("exit", "shutdown application"),
            ("note_add", "add new note to the notebook"),
@@ -365,10 +366,10 @@ operations = {
     'change_address': change_address,
     'change_birthday': change_birthday,
     'change_email': change_email,
-    'phone': phone_func,
+    'phone_': phone_func,
     'show_all': show_all,
     'exit': goodbye,
-    'phone_delete': del_phone,
+    'delete_phone': delete_phone,
     'contact_delete': delete_user,
     'search': search,
     'sort': sorter,
