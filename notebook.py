@@ -21,7 +21,9 @@ class Note:
 
     def __str__(self) -> str:
         """Модифікація виводу нотатки"""
-        return 'note: \n' + self.content + '\n insert ' + self.data + '\n' + 'no tags' if not self.tags else self.tags + '\n'
+        format_data = self.data.strftime('%d-%m-%Y')
+        tag_text = 'no tags' if not self.tags else ','.join(self.tags)
+        return f'note: {self.title}\n{self.content}\ninsert: {format_data}\nTAGS: {tag_text}'
 
     def find_text(self, text: str):
         """Пошук тексту в нотатці"""
@@ -65,7 +67,7 @@ class NoteBook(MainBook):
         for note in self.data.values():
             if note.tags:
                 if tag in note.tags:
-                    result.append(note.content)
+                    result.append(note)
 
         return result
 
