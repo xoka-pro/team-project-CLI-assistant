@@ -168,7 +168,7 @@ def editing_note() -> str:
     """Function to edit note"""
     title = input("Input at least 20 first chars of the note for editing: ")
     title = title[:20]
-    if NOTES.data.get(title):
+    if title in NOTES.data.keys():
         new_text = input("Input the new text of note: ")
         NOTES.edit_note(title, new_text)
         NOTES.saver(FILENAME_NOTES)
@@ -206,14 +206,15 @@ def searching_by_word(word: str) -> str:
 
 def searching_by_tag(word: str) -> str:
     """Function to search by tag"""
-    res = NOTES.search_by_tags(word)
-    res = "\n".join(res)
+    notes_list = list(map(str,NOTES.search_by_tags(word)))
+    res = "\n" + "\n\n".join(notes_list) + "\n"
     return res
 
 
 def sorting_by_tags(word: str) -> str:
     """Function to sort by tags"""
-    res = "\n".join(NOTES.sort_by_tags(word))
+    notes_list = list(map(str,NOTES.sort_by_tags(word)))
+    res = "\n" + "\n\n".join(notes_list) + "\n"
     return res
 
 
@@ -232,6 +233,14 @@ def show_all() -> str:
         return f'Contact list is empty'
     columns = ['Name', 'Phones', 'Birthday', 'E-mail', 'Address']
     return tabulate(result, headers=columns, tablefmt='psql')
+
+
+def show_all_note() -> str:
+    """Return all notes"""
+    all_notes = list(map(str, NOTES.values()))
+
+    res = "\n" + "\n\n".join(all_notes) + "\n"
+    return res
 
 
 @input_error
@@ -312,6 +321,7 @@ def hlp(*args) -> str:
            ("note_add", "add new note to the notebook"),
            ("note_delete", "delete the note to the notebook"),
            ("note_edit", "edite the note to the notebook"),
+           ("note_show_all", "show all notes"),
            ("tag_search", "search all notes with the tag"),
            ("tag_sort", "sort all notes by tags"),
            ("word_search", "search all notes with the word"),
@@ -365,6 +375,7 @@ operations = {
     'note_add': adding_note,
     'note_delete': delete_note,
     'note_edit': editing_note,
+    'note_show_all': show_all_note,
     'tag_search': searching_by_tag,
     'tag_sort': sorting_by_tags,
     'birthday': list_record_to_x_day_bd,
