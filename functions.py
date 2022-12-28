@@ -366,7 +366,7 @@ operations = {
     'change_address': change_address,
     'change_birthday': change_birthday,
     'change_email': change_email,
-    'phone_': phone_func,
+    'phone': phone_func,
     'show_all': show_all,
     'exit': goodbye,
     'delete_phone': delete_phone,
