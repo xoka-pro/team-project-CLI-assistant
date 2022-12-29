@@ -9,11 +9,11 @@
 ## How can you install me:
 OS X & Linux:
 ```
-pip install -i https://test.pypi.org/simple/felis-assistant
+pip install -i https://test.pypi.org/simple/ felis-assistant
 ```
 Windows:
 ```
-pip install -i https://test.pypi.org/simple/felis-assistant
+pip install -i https://test.pypi.org/simple/ felis-assistant
 ```
 
 ## What I can to do:
@@ -53,5 +53,3 @@ pip install -i https://test.pypi.org/simple/felis-assistant
 ### | Andrey Maybrodskyy  | Developer |
 
 ---
-
-
