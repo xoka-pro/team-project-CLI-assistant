@@ -1,14 +1,15 @@
-from addressbook import AddressBook, Record
-from notebook import NoteBook, Note
-from sorter import sorter
+from .addressbook import AddressBook, Record
+from .notebook import NoteBook, Note
+from .sorter import sorter
+from .weather_func import get_weather
 import difflib
 from tabulate import tabulate
 import holidays
 from datetime import date
-from weather_func import get_weather
 
-from constants import FILENAME_CONTACTS
-from constants import FILENAME_NOTES
+
+from .constants import FILENAME_CONTACTS
+from .constants import FILENAME_NOTES
 
 CONTACTS = AddressBook()
 NOTES = NoteBook()
@@ -207,7 +208,7 @@ def searching_by_word(word: str) -> str:
 @input_error
 def searching_by_tag(word: str) -> str:
     """Function to search by tag"""
-    notes_list = list(map(str,NOTES.search_by_tags(word)))
+    notes_list = list(map(str, NOTES.search_by_tags(word)))
     res = "\n" + "\n\n".join(notes_list) + "\n"
     return res
 
@@ -226,7 +227,8 @@ def show_all() -> str:
     result = []
     for name, data in CONTACTS.data.items():
         numbers = ", ".join(phone.value for phone in data.phones)
-        bday = data.birthday.value.date().strftime('%d-%m-%Y') if data.birthday else None
+        bday = data.birthday.value.date().strftime(
+            '%d-%m-%Y') if data.birthday else None
         email = data.email.value if data.email else None
         address = data.address.value if data.address else None
         result.append([name, numbers, bday, email, address])

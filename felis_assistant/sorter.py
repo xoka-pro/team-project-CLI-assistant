@@ -2,7 +2,7 @@ from os import listdir
 from pathlib import Path
 import shutil
 import re
-from constants import IMAGES_SUFFIX, DOCUMENTS_SUFFIX, AUDIO_SUFFIX, VIDEO_SUFFIX, ARCHIVES_SUFFIX
+from .constants import IMAGES_SUFFIX, DOCUMENTS_SUFFIX, AUDIO_SUFFIX, VIDEO_SUFFIX, ARCHIVES_SUFFIX
 
 
 def normalize(in_string: str) -> str:
@@ -12,7 +12,7 @@ def normalize(in_string: str) -> str:
         in_string (string):  need re module and use string translate
     """
     latin = ("a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u",
-              "f", "h", "ts", "ch", "sh", "sch", "", "y", "", "e", "yu", "ya", "je", "i", "ji", "g")
+             "f", "h", "ts", "ch", "sh", "sch", "", "y", "", "e", "yu", "ya", "je", "i", "ji", "g")
     trans = {}
     for c, l in zip("абвгдеёжзийклмнопрстуфхцчшщъыьэюяєіїґ", latin):
         trans[ord(c)] = l

@@ -1,6 +1,6 @@
 from datetime import datetime, date
 import re
-from mainbook import MainBook
+from .mainbook import MainBook
 
 
 class AddressBook(MainBook):
