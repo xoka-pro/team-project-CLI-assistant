@@ -1,57 +1,60 @@
+# <span style="color:grey"> | Welcome to your Personal Assistant | </span>
 
-# <span style="color:grey"> | Welcome to your Personal Assistant |  </span> #
 <img src="felis_catus.png" align="right" style="width: 260px"  />
 
-### *I'm Felis Сatus*. I was created to make your life sampler.
-
+### _I'm Felis Сatus Helper_. I was created to make your life sampler.
 
 ---
+
 ## How can you install me:
+
 OS X & Linux:
+
 ```
-pip install -i https://test.pypi.org/simple/felis-assistant
+pip install -e
+or
+pip install -i https://test.pypi.org/simple/ felis-assistant
 ```
+
 Windows:
+
 ```
-pip install -i https://test.pypi.org/simple/felis-assistant
+pip install
+or
+pip install -i https://test.pypi.org/simple/ felis-assistant
 ```
 
 ## What I can to do:
 
-* `help` - *to display information*
-* `add_contact` - *add new contact or new number for contact*
-* `change_phone` - *change specified number for contact*
-* `change_address` - *change specified address for contact*
-* `change_birthday` - *change specified birthday for contact*
-* `change_email` - *change specified email for contact*
-* `phone` - *show phone numbers for specified contact*
-* `show_all` - *show all contacts*
-* `search` - *search contacts by letters in name or digits in number*
-* `delete_phone` - *delete specified number from contact*
-* `contact_delete` - *delete specified contact*
-* `exit` - *shutdown application*
-* `note_add` - *add new note to the notebook*
-* `note_delete` - *delete the note to the notebook*
-* `note_edite` - *edite the note to the notebook*
-* `note_show_all` - *show all notes*
-* `tag_search` - *search all notes with the tag*
-* `tag_sort` - *sort all notes by tags*
-* `word_search` - *search all notes with the word*
-* `birthday X` - *list of contact with birthday in X days*
-* `holiday X` - *list of holidays in Ukraine today or X days*
-* `weather X` - *show weather in city X*
-
-
+- `hello` - _to start conversations with me_
+- `help` - _to display information_
+- `add` - _add new contact or new number for contact_
+- `change` - _change specified number for contact_
+- `phone` - _show phone numbers for specified contact_
+- `show_all` - _show all contacts_
+- `search` - _search contacts by letters in name or digits in number_
+- `phone_delete` - _delete specified number from contact_
+- `contact_delete` - _delete specified contact_
+- `exit` - _shutdown application_
+- `note_add` - _add new note to the notebook_
+- `note_delete` - _delete the note to the notebook_
+- `note_edite` - _edite the note to the notebook_
+- `tag_search` - _search all notes with the tag_
+- `tag_sort` - _sort all notes by tags_
+- `sort_files X` - _sorting files in directory X_
 
 ---
-## My awesome creators: ##
+
+## My awesome cretors:
 
 ### | Oleh Ovchinnikov | Team Lead |
+
 ### | Volodymyr Kramar | Scrum Master |
-### | Olga Pasichnyuk  | Developer |
-### | Nikita Sherstianykh  | Developer |
-### | Andrey Maybrodskyy  | Developer |
+
+### | Olga Pasichnyuk | Developer |
+
+### | Nikita Sherstianykh | Developer |
+
+### | Andrey Maybrodskyy | Developer |
 
 ---
-
-
