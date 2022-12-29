@@ -40,7 +40,7 @@ pip install -i https://test.pypi.org/simple/ felis-assistant
 * `birthday X` - *list of contact with birthday in X days*
 * `holiday X` - *list of holidays in Ukraine today or X days*
 * `weather X` - *show weather in city X*
-
+* `sort X` - *sort directory X*
 
 
 ---
